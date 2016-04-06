@@ -61,15 +61,17 @@
         <package name="com.yonyou.jzcloud.**.model"/>
     </typeAliases>
     -->
-
+ <!-- 
     <plugins>
         <plugin interceptor="seed.orm.mybatis.PaginationResultSetHandlerInterceptor"/>
         <plugin interceptor="seed.orm.mybatis.PaginationStatementHandlerInterceptor"/>
+       
         <plugin interceptor="tk.mybatis.mapper.mapperhelper.MapperInterceptor">
             <property name="mappers" value="seed.orm.dao.BaseDao" />
         </plugin>
+        
     </plugins>
-    
+     -->
     <mappers>
         <mapper resource="mappers/UserMapper.xml"/>
     </mappers>

@@ -1,13 +1,12 @@
 package seed.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 import seed.models.User;
 import seed.orm.dao.BaseDao;
 import seed.orm.mybatis.Page;
-
-import java.util.List;
 
 /**
  * 用户Dao接口
@@ -15,7 +14,7 @@ import java.util.List;
  * @author liuhm
  * @since 2015年12月16日
  **/
-@Repository
+//@Repository
 public interface UserDao extends BaseDao<User> {
     /**
      * 根据用户名查用户信息

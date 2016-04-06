@@ -1,16 +1,20 @@
 package seed.orm.dao.helper;
 
-import tk.mybatis.mapper.mapperhelper.EntityHelper;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Entity;
 
 import org.apache.commons.lang3.StringUtils;
 
 import seed.orm.annotation.TableSearchColumn;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
+import tk.mybatis.mapper.util.StringUtil;
 
 /**
  * Created by hubo on 2015/8/27
@@ -36,13 +40,15 @@ public class TableSearchColumnHelper {
                             TableSearchColumn joinColumn = field.getAnnotation(TableSearchColumn.class);
                             columnName = joinColumn.column();
                             if (StringUtils.isEmpty(StringUtils.trim(columnName))) {
-                                columnName = EntityHelper.camelhumpToUnderline(field.getName());
+                                //columnName = EntityHelper.camelhumpToUnderline(field.getName());
+                            	columnName = StringUtil.camelhumpToUnderline(field.getName());
                             }
                             TableSearchColumnEntity column = new TableSearchColumnEntity();
                             column.setColumn(columnName);
                             if(!StringUtils.isEmpty(joinColumn.joinTable())) {
                                 column.setJoinTable(joinColumn.joinTable());
-                                column.setJoinId(EntityHelper.camelhumpToUnderline(field.getName()));
+//                                column.setJoinId(EntityHelper.camelhumpToUnderline(field.getName()));
+                                column.setJoinId(StringUtil.camelhumpToUnderline(field.getName()));
                             }
                             searchColumnMap.get(entityClass).add(column);
                         }

@@ -6,8 +6,10 @@ package seed.pub.exception;
  */
 public class BusinessException extends Exception{
 
+	private static final long serialVersionUID = 7760867055452954659L;
 
-    public BusinessException() {
+
+	public BusinessException() {
         super();
     }
 

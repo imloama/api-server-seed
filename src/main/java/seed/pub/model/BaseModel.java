@@ -15,7 +15,9 @@ import java.util.Date;
 @MappedSuperclass
 public abstract class BaseModel implements IBaseModel{
 
-    /**
+	private static final long serialVersionUID = 5043790384605350882L;
+
+	/**
      * 主键
      */
     @Id

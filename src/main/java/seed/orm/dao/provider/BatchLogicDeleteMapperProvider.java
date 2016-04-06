@@ -4,6 +4,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.scripting.xmltags.*;
 
 import seed.orm.consts.DBConsts;
+import tk.mybatis.mapper.entity.EntityColumn;
 import tk.mybatis.mapper.mapperhelper.EntityHelper;
 import tk.mybatis.mapper.mapperhelper.MapperHelper;
 import tk.mybatis.mapper.mapperhelper.MapperTemplate;
@@ -24,20 +25,20 @@ public class BatchLogicDeleteMapperProvider extends MapperTemplate {
     public SqlNode batchDelete(MappedStatement ms) {
 
         //获取实体类型
-        Class<?> entityClass = getSelectReturnType(ms);
+        Class<?> entityClass = getEntityClass(ms);
 
         List<SqlNode> sqlNodes = new LinkedList<>();
 
         //update table
         sqlNodes.add(new StaticTextSqlNode("UPDATE " + tableName(entityClass)));
         //获取全部列
-        Set<EntityHelper.EntityColumn> columnList = EntityHelper.getColumns(entityClass);
+        Set<EntityColumn> columnList = EntityHelper.getColumns(entityClass);
 
-        EntityHelper.EntityColumn drCol = null;
+        EntityColumn drCol = null;
 
-        EntityHelper.EntityColumn idCol = null;
+        EntityColumn idCol = null;
 
-        for (EntityHelper.EntityColumn entityColumn : columnList) {
+        for (EntityColumn entityColumn : columnList) {
             if(DBConsts.FIELD_DR.equals(entityColumn.getColumn())){
                 drCol = entityColumn;
             }
