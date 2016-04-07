@@ -13,6 +13,7 @@ import java.util.List;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
@@ -254,6 +255,11 @@ public abstract class BaseService<T  extends IBaseModel> {
 		return getBaseMapper().selectByExample(example);
 	}
 
-	public abstract BaseMapper<T> getBaseMapper();
+	@Autowired
+	private BaseMapper<T> baseMapper;
+	
+	public BaseMapper<T> getBaseMapper(){
+		return this.baseMapper;
+	}
 
 }
