@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextStoppedEvent;
 
-import seed.quartz.QuartzPlugin;
+import seed.core.quartz.QuartzPlugin;
 
 @SpringBootApplication
 public class Application {

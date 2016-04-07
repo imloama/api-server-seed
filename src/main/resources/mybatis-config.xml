@@ -3,10 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <properties>
-        <property name="dialectClass" value="seed.orm.dialect.MySql5Dialect"/>
-    </properties>
-
     <!-- 配置mybatis的缓存，延迟加载等等一系列属性 -->
     <settings>
 
@@ -56,22 +52,6 @@
 
     </settings>
 
-    <!--
-    <typeAliases>
-        <package name="com.yonyou.jzcloud.**.model"/>
-    </typeAliases>
-    -->
- <!-- 
-    <plugins>
-        <plugin interceptor="seed.orm.mybatis.PaginationResultSetHandlerInterceptor"/>
-        <plugin interceptor="seed.orm.mybatis.PaginationStatementHandlerInterceptor"/>
-       
-        <plugin interceptor="tk.mybatis.mapper.mapperhelper.MapperInterceptor">
-            <property name="mappers" value="seed.orm.dao.BaseDao" />
-        </plugin>
-        
-    </plugins>
-     -->
     <mappers>
         <mapper resource="mappers/UserMapper.xml"/>
     </mappers>
