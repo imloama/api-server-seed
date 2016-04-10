@@ -73,6 +73,12 @@
 			<artifactId>sqlite-jdbc</artifactId>
 			<version>3.8.11.2</version>
 		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>1.0.18</version>
+		</dependency>
+
 
 
 		<dependency>

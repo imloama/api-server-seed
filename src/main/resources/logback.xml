@@ -44,6 +44,7 @@
     <!-- 下面配置一些第三方包的日志过滤级别，用于避免刷屏  -->
     <logger name="org.hibernate" level="ERROR"/>
     <logger name="org.springframework" level="ERROR"/>
+    <logger name="com.alibaba.druid" level="DEBUG"/>
     <logger name="org.apache" level="DEBUG"/>
     <logger name="org.mybatis" level="DEBUG"/>    
     <logger name="seed" level="DEBUG"/>
