@@ -1,16 +1,9 @@
 package seed.demo.models;
 
-import java.util.Date;
-
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import seed.core.model.IBaseModel;
+import seed.core.model.BaseModel;
 
 /**
  * 用户数据模型
@@ -20,11 +13,11 @@ import seed.core.model.IBaseModel;
  **/
 @Entity
 @Table(name="sm_user")
-public class User implements IBaseModel {
-    @Id
-    private String id;
+public class User extends BaseModel {
 
-    private String code;
+	private static final long serialVersionUID = 1657158559598921654L;
+
+	private String code;
 
     private String name;
 
@@ -44,23 +37,9 @@ public class User implements IBaseModel {
 
     private String memo;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date ts;
-
-    private Short dr;
 
     public User() {
 
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getCode() {
@@ -143,23 +122,4 @@ public class User implements IBaseModel {
         this.memo = memo;
     }
 
-    @Override
-    public Date getTs() {
-        return ts;
-    }
-
-    @Override
-    public void setTs(Date ts) {
-        this.ts = ts;
-    }
-
-    @Override
-    public Short getDr() {
-        return dr;
-    }
-
-    @Override
-    public void setDr(Short dr) {
-        this.dr = dr;
-    }
 }
