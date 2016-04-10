@@ -5,6 +5,13 @@ API服务基础脚手架搭建，采用spring-boot\spring-session\mybatis\redis\
 
 ## 更新纪录：
 
+
+20160410
+--------
+1. 集成fastjson作为json格式化与解析器
+2. 集成druid
+
+
 20160407
 --------
 1. 升级mapper到最新版本3.3.8，重新适配，调整原有代码，由于扫描相关性，将mybatis相关代码统一放到了包orm下
