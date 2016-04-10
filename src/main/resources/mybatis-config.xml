@@ -52,8 +52,5 @@
 
     </settings>
 
-    <mappers>
-        <mapper resource="mappers/UserMapper.xml"/>
-    </mappers>
 
 </configuration>
