@@ -31,5 +31,11 @@ public class UserController {
 		return service.selectPage(p);
 	}
 	
+	@RequestMapping("/user")
+	@ResponseBody
+	public User user(){
+		return this.service.getMapper().selectByLoginName("admin");
+	}
+	
 	
 }
