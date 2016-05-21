@@ -5,6 +5,11 @@ API服务基础脚手架搭建，采用spring-boot\spring-session\mybatis\redis\
 
 ## 更新纪录：
 
+20160521
+---------------
+1. 添加dubbo，采用注解方式
+2. dubbo的注解与使用示例，见[示例]: https://github.com/mazhaoyong/dubbox-zookeeper-demo/ "示例"
+
 
 20160410
 --------
