@@ -5,6 +5,11 @@ API服务基础脚手架搭建，采用spring-boot\spring-session\mybatis\redis\
 
 ## 更新纪录：
 
+20160914
+---------------
+1. 添加jwt支持
+
+
 20160521
 ---------------
 1. 添加dubbo，采用注解方式

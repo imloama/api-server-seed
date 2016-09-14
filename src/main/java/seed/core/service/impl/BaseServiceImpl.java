@@ -1,4 +1,4 @@
-package seed.core.service;
+package seed.core.service.impl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -23,10 +23,12 @@ import orm.consts.DBConsts;
 import orm.mapper.BaseMapper;
 import seed.core.exception.BusinessException;
 import seed.core.model.IBaseModel;
+import seed.core.service.IBaseService;
 import tk.mybatis.mapper.entity.Example;
 
-public abstract class BaseService<T  extends IBaseModel> {
+public abstract class BaseServiceImpl<T  extends IBaseModel> implements IBaseService<T> {
 
+	@Override
 	public List<T> selectAll() throws Exception {
 		T t = getGenericType().newInstance();
 		t.setDr(DBConsts.DR_NORMAL);

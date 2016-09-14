@@ -1,12 +1,11 @@
-package seed.demo.service;
-
-import org.springframework.transaction.annotation.Transactional;
+package seed.demo.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
 
-import seed.core.service.BaseService;
+import seed.core.service.impl.BaseServiceImpl;
 import seed.demo.mapper.UserMapper;
 import seed.demo.models.User;
+import seed.demo.service.IUserService;
 
 
 /**
@@ -15,9 +14,9 @@ import seed.demo.models.User;
  * 
  * @author mazhaoyong
  */
-@Service(protocol = { "dubbo" })
-@Transactional
-public class UserService extends BaseService<User>{
+@Service(protocol = { "dubbo" }, interfaceClass = IUserService.class)
+//@Transactional
+public class UserServiceImpl extends BaseServiceImpl<User>  implements IUserService{
 	
 	public UserMapper getMapper() {
 		return (UserMapper)getBaseMapper();
