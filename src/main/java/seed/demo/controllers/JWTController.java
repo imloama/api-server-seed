@@ -10,19 +10,22 @@ import com.nimbusds.jose.JOSEException;
 
 import seed.config.jwt.JWT;
 import seed.config.jwt.JWTUser;
+import seed.core.model.APIResult;
 
 @RestController
 public class JWTController {
 
 	@RequestMapping(value = "/api/v1/login", method = RequestMethod.POST)
 	@ResponseBody
-	public String login(@RequestParam("username") String username,
+	public APIResult login(@RequestParam("username") String username,
 			@RequestParam("secretkey") String secretkey){
 		//测试用，直接判断
 		if("admin".equals(username) && "123".equals(secretkey)){
 			JWTUser user = new JWTUser("1",username);
 			try {
-				return JWT.newToken(user);
+				APIResult result = new APIResult();
+				result.put("token", JWT.newToken(user));
+				return result;
 			} catch (JOSEException e) {
 				throw new RuntimeException(e.getMessage(),e);
 			}

@@ -5,4 +5,6 @@ import seed.demo.models.User;
 
 public interface IUserService extends IBaseService<User>{
 
+	public User selectByLoginName(String name);
+	
 }

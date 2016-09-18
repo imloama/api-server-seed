@@ -11,9 +11,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
@@ -26,21 +27,23 @@ import seed.core.model.IBaseModel;
 import seed.core.service.IBaseService;
 import tk.mybatis.mapper.entity.Example;
 
-public abstract class BaseServiceImpl<T  extends IBaseModel> implements IBaseService<T> {
+public abstract class BaseServiceImpl<T extends IBaseModel> implements IBaseService<T> {
 
+	//@Cacheable
 	@Override
 	public List<T> selectAll() throws Exception {
 		T t = getGenericType().newInstance();
 		t.setDr(DBConsts.DR_NORMAL);
 		return getBaseMapper().select(t);
 	}
-	
-	  public PageInfo<T> selectPage(int p) {
-		  PageHelper.startPage(p, 10);
-		  List<T> list = getBaseMapper().selectAll();
-		  PageInfo<T> page = new PageInfo<T>(list);
-		  return page;
-	    }
+
+	@Cacheable
+	public PageInfo<T> selectPage(int p) {
+		PageHelper.startPage(p, 10);
+		List<T> list = getBaseMapper().selectAll();
+		PageInfo<T> page = new PageInfo<T>(list);
+		return page;
+	}
 
 	/**
 	 * 获取泛型类型
@@ -70,6 +73,7 @@ public abstract class BaseServiceImpl<T  extends IBaseModel> implements IBaseSer
 		return null;
 	}
 
+	@Cacheable(key = "#entity.getId()")
 	@Transactional(rollbackFor = Exception.class)
 	public int save(T entity) throws BusinessException {
 		int result;
@@ -84,6 +88,7 @@ public abstract class BaseServiceImpl<T  extends IBaseModel> implements IBaseSer
 		return result;
 	}
 
+	@CacheEvict(allEntries = true)
 	@Transactional(rollbackFor = Exception.class)
 	public int save(List<T> arr) throws BusinessException {
 
@@ -118,6 +123,7 @@ public abstract class BaseServiceImpl<T  extends IBaseModel> implements IBaseSer
 		return ts;
 	}
 
+	@CacheEvict(key = "#entity.getId()")
 	@Transactional(rollbackFor = Exception.class)
 	public int delete(T entity) throws BusinessException {
 		int result;
@@ -137,13 +143,15 @@ public abstract class BaseServiceImpl<T  extends IBaseModel> implements IBaseSer
 
 		return result;
 	}
-	
+
+	@CacheEvict(allEntries = true)
 	@Transactional(rollbackFor = Exception.class)
 	public int delete(List<T> entitys) throws BusinessException {
 		int result = getBaseMapper().batchDelete(entitys);
 		return result;
 	}
 
+	@CacheEvict(key = "#entity.getId()")
 	@Transactional(rollbackFor = Exception.class)
 	public int update(T entity) throws BusinessException {
 		int result;
@@ -160,6 +168,7 @@ public abstract class BaseServiceImpl<T  extends IBaseModel> implements IBaseSer
 		return result;
 	}
 
+	@CacheEvict(allEntries = true)
 	@Transactional(rollbackFor = Exception.class)
 	public int update(List<T> entitys) throws BusinessException {
 		int result = 0;
@@ -186,52 +195,7 @@ public abstract class BaseServiceImpl<T  extends IBaseModel> implements IBaseSer
 		entity.setTs(createTs());
 	}
 
-	@SuppressWarnings("unchecked")
-	public int updateStatus(T entity, short status) throws BusinessException {
-
-		int result;
-
-		T newEntity;
-
-		try {
-			validateTs(entity);
-			newEntity = (T) entity.getClass().newInstance();
-			newEntity.setId(entity.getId());
-			PropertyUtils.setSimpleProperty(newEntity, DBConsts.FIELD_STATUS, status);
-			setNewTs(newEntity);
-			result = getBaseMapper().updateByPrimaryKeySelective(newEntity);
-
-		} catch (Exception e) {
-			throw new BusinessException(e.getMessage(), e);
-		}
-
-		return result;
-	}
-
-	public int enable(T entity) throws BusinessException {
-		return updateStatus(entity, DBConsts.STATUS_ENABLE);
-	}
-
-	public int enable(List<T> entitys) throws BusinessException {
-		int result = 0;
-		for (T entity : entitys) {
-			result += enable(entity);
-		}
-		return result;
-	}
-
-	public int disable(T entity) throws BusinessException {
-		return updateStatus(entity, DBConsts.STATUS_DISABLE);
-	}
-
-	public int disable(List<T> entitys) throws BusinessException {
-		int result = 0;
-		for (T entity : entitys) {
-			result += disable(entity);
-		}
-		return result;
-	}
-
+	@Cacheable
 	public List<T> selectByCondition(T entity) throws BusinessException {
 		Field[] fields = entity.getClass().getDeclaredFields();
 
@@ -259,8 +223,8 @@ public abstract class BaseServiceImpl<T  extends IBaseModel> implements IBaseSer
 
 	@Autowired
 	private BaseMapper<T> baseMapper;
-	
-	public BaseMapper<T> getBaseMapper(){
+
+	public BaseMapper<T> getBaseMapper() {
 		return this.baseMapper;
 	}
 

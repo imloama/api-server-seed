@@ -3,7 +3,6 @@ package seed.demo.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,8 +17,8 @@ import seed.demo.service.IUserService;
 @RestController
 public class UserController {
 
+	//@Reference
 	@Autowired
-	@Qualifier("IUserService")
 	private IUserService service;
 
 	@RequestMapping(value = "/api/v1/users", method = RequestMethod.GET)
@@ -28,10 +27,18 @@ public class UserController {
 		return service.selectAll();
 	}
 
-	@RequestMapping(value = "/api/v1//users/page/{p}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/v1/users/page/{p}", method = RequestMethod.GET)
 	@ResponseBody
 	public PageInfo<User> page(@PathVariable("p") int p) throws Exception {
 		return service.selectPage(p);
 	}
+	
+	@RequestMapping(value = "/api/v1/users/byname/{name}", method = RequestMethod.GET)
+	@ResponseBody
+	public User selectUserByName(@PathVariable("name") String name) throws Exception {
+		return service.selectByLoginName(name);
+	}
+	
+	
 
 }

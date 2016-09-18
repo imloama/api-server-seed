@@ -14,13 +14,13 @@ import tk.mybatis.spring.mapper.MapperScannerConfigurer;
 
 @Configuration
 @AutoConfigureAfter(DruidConfig.class)
-public class MybatisCoinfig {
+public class MybatisConfig {
 
 	@Bean
 	public MapperScannerConfigurer getMapperConfig() {
 		MapperScannerConfigurer config = new MapperScannerConfigurer();
 		config.setSqlSessionFactoryBeanName("sqlSessionFactory");
-		config.setBasePackage("seed");
+		config.setBasePackage("seed.**.mapper");
 		Properties props = new Properties();
 		props.setProperty("mappers", BaseMapper.class.getName());
 		props.setProperty("notEmpty", "false");

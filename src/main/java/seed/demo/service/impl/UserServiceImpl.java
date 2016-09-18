@@ -1,6 +1,6 @@
 package seed.demo.service.impl;
 
-import com.alibaba.dubbo.config.annotation.Service;
+import org.springframework.stereotype.Service;
 
 import seed.core.service.impl.BaseServiceImpl;
 import seed.demo.mapper.UserMapper;
@@ -14,12 +14,18 @@ import seed.demo.service.IUserService;
  * 
  * @author mazhaoyong
  */
-@Service(protocol = { "dubbo" }, interfaceClass = IUserService.class)
+//@Service(protocol = { "dubbo" }, interfaceClass = IUserService.class)
 //@Transactional
+@Service
 public class UserServiceImpl extends BaseServiceImpl<User>  implements IUserService{
 	
 	public UserMapper getMapper() {
 		return (UserMapper)getBaseMapper();
+	}
+
+	@Override
+	public User selectByLoginName(String name) {
+		return this.getMapper().selectByLoginName(name);
 	}
 	
 	

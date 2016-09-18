@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="seed.demo.mapper.UserMapper">
+	<cache type="seed.core.cache.redis.LoggingRedisCache" />
 	<resultMap id="UserResultMap" type="seed.demo.models.User">
 		<id column="id" property="id" jdbcType="CHAR" />
 		<result column="code" property="code" jdbcType="VARCHAR" />
