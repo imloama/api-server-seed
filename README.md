@@ -5,6 +5,17 @@ API服务基础脚手架搭建，采用spring-boot\spring-session\mybatis\redis\
 
 ## 更新纪录：
 
+待实现
+1. 集成spring-security
+2. 集成swagger2
+3. 继承基础controller，实现所有模型的api
+
+
+20161020
+-----------------
+将dubbo改为motan,motan的配置代码来自github.com/chenxing2/spring-boot-starter-motan
+
+
 20160914
 ---------------
 1. 添加jwt支持

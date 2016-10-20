@@ -2,7 +2,6 @@ package seed.demo.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.pagehelper.PageInfo;
+import com.weibo.api.motan.config.springsupport.annotation.MotanReferer;
 
 import seed.demo.models.User;
 import seed.demo.service.IUserService;
@@ -18,7 +18,7 @@ import seed.demo.service.IUserService;
 public class UserController {
 
 	//@Reference
-	@Autowired
+	@MotanReferer
 	private IUserService service;
 
 	@RequestMapping(value = "/api/v1/users", method = RequestMethod.GET)

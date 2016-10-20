@@ -18,6 +18,7 @@
 		<start-class>seed.Application</start-class>
 		<java.version>1.7</java.version>
 		<jwt.version>4.11.2</jwt.version>
+		<motan.version>0.2.1</motan.version>
 	</properties>
 
 	<dependencies>
@@ -52,6 +53,25 @@
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>1.1.1</version>
 		</dependency>
+
+		<!-- Springboot 热部署 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<!-- Swagger API文档 -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.2.2</version>
+		</dependency>
+
 		<dependency>
 			<groupId>tk.mybatis</groupId>
 			<artifactId>mapper</artifactId>
@@ -149,23 +169,41 @@
 			<version>1.2.7</version>
 		</dependency>
 
-		<!-- dubbo引用 -->
+		<!-- motan 取消依赖的log4j -->
 		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>dubbo</artifactId>
-			<version>2.8.4</version>
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-springsupport</artifactId>
+			<version>${motan.version}</version>
 			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-log4j12</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
 				<exclusion>
 					<artifactId>log4j</artifactId>
 					<groupId>log4j</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- zookeeper -->
 		<dependency>
-			<groupId>org.apache.zookeeper</groupId>
-			<artifactId>zookeeper</artifactId>
-			<version>3.4.6</version>
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-core</artifactId>
+			<version>${motan.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-log4j12</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-transport-netty</artifactId>
+			<version>${motan.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>log4j</artifactId>
@@ -178,11 +216,9 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.101tec</groupId>
-			<artifactId>zkclient</artifactId>
-			<version>0.7</version>
-			<!--zkClient和disconf都会依赖zookeeper,而zookeeper会依赖slf4j-log4j12和log4j, 在我们使用logback的情况下，需要将log4j转为logback，则需依赖log4j-over-slf4j。 
-				slf4j-log4j12会与log4j-over-slf4j循环依赖导致冲突， 所以所有依赖zookeeper的jar必须exclude掉slf4j-log4j12 -->
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-registry-consul</artifactId>
+			<version>${motan.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>log4j</artifactId>
@@ -193,8 +229,8 @@
 					<groupId>org.slf4j</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
