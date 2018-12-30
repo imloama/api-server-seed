@@ -3,13 +3,14 @@ package com.github.imloama.api.base;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 
 import java.util.Date;
 
 public abstract class BaseModel<T extends Convert> extends Convert<T>{
 
     @TableId
-    private String id;
+    private Long id;
     /**
      * 时间戳
      */
@@ -18,13 +19,14 @@ public abstract class BaseModel<T extends Convert> extends Convert<T>{
     /**
      *
      */
+    @TableLogic
     private Short dr;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public <T>T setId(String id) {
+    public <T>T setId(Long id) {
         this.id = id;
         return (T) this;
     }

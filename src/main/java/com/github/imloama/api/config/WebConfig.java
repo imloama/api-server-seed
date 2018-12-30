@@ -1,8 +1,10 @@
 package com.github.imloama.api.config;
 
+import cn.hutool.core.lang.Snowflake;
+import com.github.imloama.api.config.jwt.JWTTokenInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
-import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -12,7 +14,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
 
-import seed.config.jwt.JWTTokenInterceptor;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter{
@@ -49,5 +50,12 @@ public class WebConfig extends WebMvcConfigurerAdapter{
 		interceptor.setProps(props);
 		registry.addInterceptor(interceptor);
 	}
+
+	@Bean
+	public Snowflake defaultSnowflake(){
+		Snowflake flake = new Snowflake(props.getWorkerId(),props.getDatacenterId());
+		return  flake;
+	}
+
 
 }

@@ -1,5 +1,6 @@
 package com.github.imloama.api.base;
 
+import cn.hutool.core.lang.Snowflake;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -15,6 +16,7 @@ import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
@@ -33,7 +35,7 @@ import java.util.stream.Collectors;
  * @author Caratacus
  */
 //@Transactional(readOnly = true)
-public class BaseServiceImpl<M extends BaseMapper<T>, T extends Convert> implements BaseService<T> {
+public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> implements BaseService<T> {
 
 
     @Autowired
@@ -41,6 +43,9 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends Convert> impleme
 
     @Autowired
     private CacheManager cacheManager;
+
+    @Autowired
+    private Snowflake snowflake;
 
     /**
      * <p>
@@ -96,9 +101,13 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends Convert> impleme
         return this.cacheManager.getCache(name);
     }
 
+    @Cacheable(value = Consts.CACHE_NAME, key = "#id")
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean save(T entity) {
+        entity.setId(this.snowflake.nextId());
+        entity.setDr(Consts.DR_DEFAULT);
+        entity.setTs(new Date());
         return retBool(baseMapper.insert(entity));
     }
 

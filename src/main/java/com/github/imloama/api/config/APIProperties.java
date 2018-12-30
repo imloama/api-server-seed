@@ -2,6 +2,7 @@ package com.github.imloama.api.config;
 
 import java.util.List;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConfigurationProperties(prefix = "api")
+@Data
 public class APIProperties {
 	
 	private String prefix = "/api";
@@ -21,22 +23,8 @@ public class APIProperties {
 	 */
 	private List<String> excludeUrls;
 
-	public String getPrefix() {
-		return prefix;
-	}
-
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
-
-	public List<String> getExcludeUrls() {
-		return excludeUrls;
-	}
-
-	public void setExcludeUrls(List<String> excludeUrls) {
-		this.excludeUrls = excludeUrls;
-	}
-	
+	private long workerId = 0L;
+	private long datacenterId = 0L;
 	
 	
 	
