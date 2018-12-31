@@ -10,6 +10,8 @@ import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
@@ -125,6 +127,9 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
         if (CollectionUtils.isEmpty(entityList)) {
             return true;
         }
+        for(T t: entityList){
+            t.setId(this.snowflake.nextId());
+        }
         int i = 0;
         String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
@@ -148,6 +153,7 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
      * @param entity 实体对象
      * @return boolean
      */
+    @Cacheable(value = Consts.CACHE_NAME, key = "#entity.id")
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveOrUpdate(T entity) {
@@ -157,6 +163,7 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
             if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
                 Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
                 if (StringUtils.checkValNull(idVal)) {
+                    entity.setId(this.snowflake.nextId());
                     return save(entity);
                 } else {
                     /*
@@ -181,13 +188,18 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
         Class<?> cls = currentModelClass();
         TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
         int i = 0;
+        Map<Long,T> newIds = Maps.newHashMap();
+        List<Long> upIds = Lists.newArrayList();
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             for (T entity : entityList) {
                 if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
                     Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
                     if (StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal))) {
+                        entity.setId(this.snowflake.nextId());
+                        //newIds.add(entity.getId());
                         batchSqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), entity);
                     } else {
+                        upIds.add(entity.getId());
                         MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                         param.put(Constants.ENTITY, entity);
                         batchSqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), param);
@@ -202,6 +214,12 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
                 }
             }
             batchSqlSession.flushStatements();
+        }
+        if(newIds.size()>0){
+//            newIds.forEach(id->{
+//                //this.getCache().put(id,);
+//            });
+
         }
         return true;
     }
