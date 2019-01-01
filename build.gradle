@@ -32,12 +32,16 @@ repositories {
 	mavenCentral()
 }
 
+configurations {
+	compile.exclude module: 'spring-boot-starter-tomcat'
+}
 
 dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('org.springframework.boot:spring-boot-starter-aop')
     implementation('org.springframework.boot:spring-boot-starter-data-redis')
     implementation('org.springframework.boot:spring-boot-starter-quartz')
+	compile('org.springframework.boot:spring-boot-starter-undertow')
 
     implementation("org.modelmapper:modelmapper:2.3.1")
     implementation('com.alibaba:druid:1.1.12')
