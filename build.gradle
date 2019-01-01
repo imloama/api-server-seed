@@ -4,10 +4,16 @@ buildscript {
 	}
 	repositories {
 		mavenLocal()
+		maven {
+			name "aliyunmaven"
+			url "http://maven.aliyun.com/nexus/content/groups/public/"
+		}
 		mavenCentral()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath "org.asciidoctor:asciidoctor-gradle-plugin:1.5.7"
+		classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.16'
 	}
 }
 
@@ -18,6 +24,8 @@ apply plugin: 'idea'
 apply plugin: 'application' //需要打jar包时启用该配置，并注释掉上一行，配置mainClassName
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'groovy'
+apply plugin: "org.asciidoctor.convert"
 
 
 group = 'com.github.imloama'
@@ -29,6 +37,10 @@ mainClassName = "com.github.imloama.api.APIApplication"
 
 repositories {
 	mavenLocal()
+	maven {
+		name "aliyunmaven"
+		url "http://maven.aliyun.com/nexus/content/groups/public/"
+	}
 	mavenCentral()
 }
 
@@ -41,7 +53,13 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-aop')
     implementation('org.springframework.boot:spring-boot-starter-data-redis')
     implementation('org.springframework.boot:spring-boot-starter-quartz')
-	compile('org.springframework.boot:spring-boot-starter-undertow')
+	implementation('org.springframework.boot:spring-boot-starter-undertow')
+	implementation('org.springframework.session:spring-session-data-redis')
+
+	// swagger
+	implementation("io.springfox:springfox-swagger2:2.9.2")
+	implementation('io.springfox:springfox-swagger-ui:2.9.2')
+	implementation("io.springfox:springfox-staticdocs:2.6.1")
 
     implementation("org.modelmapper:modelmapper:2.3.1")
     implementation('com.alibaba:druid:1.1.12')
@@ -64,4 +82,11 @@ dependencies {
     runtimeOnly('mysql:mysql-connector-java')
 	compileOnly('org.projectlombok:lombok')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
+}
+
+def targetDocDir = "${project.buildDir}/asciidoc/generated/swagger_adoc"
+
+asciidoctor {
+	sourceDir = file(targetDocDir)
+	backends = ['html5', 'pdf']
 }

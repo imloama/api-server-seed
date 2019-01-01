@@ -2,6 +2,7 @@ package com.github.imloama.api.utils;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,7 @@ public final class RequestUtil {
 	}
 
 
-	public String getBrowserName(String agent) {
+	public static String getBrowserName(String agent) {
 		if (agent.indexOf("msie 7") > 0) {
 			return "ie7";
 		} else if (agent.indexOf("msie 8") > 0) {
@@ -70,4 +71,18 @@ public final class RequestUtil {
 			return "Others";
 		}
 	}
+
+
+	public static String getStrParam(HttpServletRequest request,String key){
+		return request.getParameter(key);
+	}
+
+	public static String getStrParam(HttpServletRequest request,String key,String defaultValue){
+		String val = request.getParameter(key);
+		if(StringUtils.isBlank(val)){
+			return defaultValue;
+		}
+		return val;
+	}
+
 }

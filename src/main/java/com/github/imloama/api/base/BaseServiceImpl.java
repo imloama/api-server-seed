@@ -43,6 +43,10 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
     @Autowired
     protected M baseMapper;
 
+    public M getMapper() {
+        return baseMapper;
+    }
+
     @Autowired
     private CacheManager cacheManager;
 
