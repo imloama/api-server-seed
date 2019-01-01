@@ -103,14 +103,17 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
         return this.cacheManager.getCache(name);
     }
 
-    @Cacheable(value = Consts.CACHE_NAME, key = "#id")
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean save(T entity) {
         entity.setId(this.snowflake.nextId());
         entity.setDr(Consts.DR_DEFAULT);
         entity.setTs(new Date());
-        return retBool(baseMapper.insert(entity));
+        boolean result = retBool(baseMapper.insert(entity));
+        if(result){
+            this.getCache().put(entity.getId(), entity);
+        }
+        return result;
     }
 
     /**
@@ -131,16 +134,22 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
             t.setId(this.snowflake.nextId());
         }
         int i = 0;
+        Map<Long,T> values = Maps.newHashMap();
         String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             for (T anEntityList : entityList) {
                 batchSqlSession.insert(sqlStatement, anEntityList);
+                values.put(anEntityList.getId(), anEntityList);
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
                 }
                 i++;
             }
             batchSqlSession.flushStatements();
+        }
+        Cache cache = this.getCache();
+        for(Map.Entry<Long,T> entry:values.entrySet()){
+            cache.put(entry.getKey(), entry.getValue());
         }
         return true;
     }
@@ -153,7 +162,6 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
      * @param entity 实体对象
      * @return boolean
      */
-    @Cacheable(value = Consts.CACHE_NAME, key = "#entity.id")
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveOrUpdate(T entity) {
@@ -163,7 +171,6 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
             if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
                 Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
                 if (StringUtils.checkValNull(idVal)) {
-                    entity.setId(this.snowflake.nextId());
                     return save(entity);
                 } else {
                     /*
@@ -188,18 +195,17 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
         Class<?> cls = currentModelClass();
         TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
         int i = 0;
-        Map<Long,T> newIds = Maps.newHashMap();
-        List<Long> upIds = Lists.newArrayList();
+        Map<Long,T> map = Maps.newHashMap();
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             for (T entity : entityList) {
                 if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
                     Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
                     if (StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal))) {
                         entity.setId(this.snowflake.nextId());
-                        //newIds.add(entity.getId());
+                        map.put(entity.getId(), entity);
                         batchSqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), entity);
                     } else {
-                        upIds.add(entity.getId());
+                        map.put(entity.getId(), entity);
                         MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                         param.put(Constants.ENTITY, entity);
                         batchSqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), param);
@@ -215,11 +221,11 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
             }
             batchSqlSession.flushStatements();
         }
-        if(newIds.size()>0){
-//            newIds.forEach(id->{
-//                //this.getCache().put(id,);
-//            });
-
+        if(map.size()>0){
+            Cache cache = this.getCache();
+            for(Map.Entry<Long,T> entry:map.entrySet()){
+                cache.put(entry.getKey(), entry.getValue());
+            }
         }
         return true;
     }
@@ -227,31 +233,48 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeById(Serializable id) {
-        return SqlHelper.delBool(baseMapper.deleteById(id));
+        boolean result = SqlHelper.delBool(baseMapper.deleteById(id));
+        if(result){
+            this.getCache().evict(id);
+        }
+        return result;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(Wrapper<T> queryWrapper) {
+        this.getCache().clear();//清理所有缓存
         return SqlHelper.delBool(baseMapper.delete(queryWrapper));
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateSelectiveById(T entity) {
-        return retBool(baseMapper.updateById(entity));
+        boolean result = retBool(baseMapper.updateById(entity));
+        if(result){
+            this.getCache().put(entity.getId(), entity);
+        }
+        return result;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateById(T entity) {
-        return retBool(baseMapper.updateById(entity));
+        boolean result = retBool(baseMapper.updateById(entity));
+        if(result){
+            this.getCache().put(entity.getId(), entity);
+        }
+        return result;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean update(T entity, Wrapper<T> updateWrapper) {
-        return retBool(baseMapper.update(entity, updateWrapper));
+        boolean result = retBool(baseMapper.update(entity, updateWrapper));
+        if(result){
+            this.getCache().clear();
+        }
+        return result;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -275,43 +298,55 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
             }
             batchSqlSession.flushStatements();
         }
+        for(T t:entityList){
+            this.getCache().put(t.getId(), t);
+        }
         return true;
     }
 
+    @Cacheable(value = Consts.CACHE_NAME, key = "#id")
+    @Transactional(readOnly = true)
     @Override
     public T getById(Serializable id) {
         return baseMapper.selectById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public int count(Wrapper<T> queryWrapper) {
         return SqlHelper.retCount(baseMapper.selectCount(queryWrapper));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<T> list(Wrapper<T> queryWrapper) {
         return baseMapper.selectList(queryWrapper);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public IPage<T> page(IPage<T> page, Wrapper<T> queryWrapper) {
         return baseMapper.selectPage(page, queryWrapper);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public <R> List<R> listObjs(Wrapper<T> queryWrapper, Function<? super Object, R> mapper) {
         return baseMapper.selectObjs(queryWrapper).stream().filter(Objects::nonNull).map(mapper).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public <R> IPage<R> pageEntities(IPage page, Wrapper<T> wrapper, Function<? super T, R> mapper) {
         return page(page, wrapper).convert(mapper);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public <R> List<R> entitys(Wrapper<T> wrapper, Function<? super T, R> mapper) {
         return list(wrapper).stream().map(mapper).collect(Collectors.toList());
     }
+
 
     private <K> Map<K, T> list2Map(List<T> list, SFunction<T, K> column) {
         if (list == null) {
@@ -330,6 +365,7 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseModel> imple
         return map;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public <K> Map<K, T> list2Map(Wrapper<T> wrapper, SFunction<T, K> column) {
         return list2Map(list(wrapper), column);
