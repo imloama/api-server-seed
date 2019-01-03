@@ -1,7 +1,7 @@
 # api-server-seed
 API服务基础脚手架搭建，采用spring-boot\spring-session\mybatis\redis\quartz等，支持集群部署
 
-[v2 is developing](https://github.com/imloama/api-server-seed/blob/v2)
+[v2 is developing](https://github.com/imloama/api-server-seed/tree/v2)
 
 
 
