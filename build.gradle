@@ -41,6 +41,7 @@ repositories {
 		name "aliyunmaven"
 		url "http://maven.aliyun.com/nexus/content/groups/public/"
 	}
+	maven { url 'https://jitpack.io' }
 	mavenCentral()
 }
 
@@ -73,6 +74,7 @@ dependencies {
 
 
 	implementation('cn.hutool:hutool-all:4.3.1')
+	implementation 'com.github.imloama:mybatisplus-bootext:0.0.1'
 
     //jwt
     implementation('com.nimbusds:nimbus-jose-jwt:6.5.1')

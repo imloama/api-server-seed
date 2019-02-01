@@ -1,10 +1,10 @@
 package com.github.imloama.api.demo.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.imloama.api.base.APIResult;
 import com.github.imloama.api.base.BaseController;
 import com.github.imloama.api.demo.model.User;
 import com.github.imloama.api.demo.service.IUserService;
+import com.github.imloama.mybatisplus.bootext.base.APIResult;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
