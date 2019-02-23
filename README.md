@@ -1,42 +1,32 @@
 # api-server-seed
-API服务基础脚手架搭建，采用spring-boot\spring-session\mybatis\redis\quartz等，支持集群部署
-
-[v2 is developing](https://github.com/imloama/api-server-seed/tree/v2)
+API服务基础脚手架搭建，采用spring-boot\spring-session\mybatis\redis\quartz\swagger2等，支持集群部署
 
 
 
-## 更新纪录：
+开发部署
+===
+> 依赖环境
+1. JDK 1.8
+2. gradle
+3. idea或eclipse，需要安装lombok插件，IDEA需要在"设置找到annotation processor，启用enable annotation processing"
+4. mysql
 
-待实现
-1. 集成spring-security
-2. 集成swagger2
-3. 继承基础controller，实现所有模型的api
-
-
-20161020
------------------
-将dubbo改为motan,motan的配置代码来自github.com/chenxing2/spring-boot-starter-motan
-
-
-20160914
----------------
-1. 添加jwt支持
-
-
-20160521
----------------
-1. 添加dubbo，采用注解方式
-2. dubbo的注解与使用示例，见[示例]: https://github.com/mazhaoyong/dubbox-zookeeper-demo/ "示例"
+> 部署步骤
+1. 在mysql新建数据库api-seed，新建表
+```sql
+create table user(
+     id int primary key auto_increment,#主键
+     username varchar(56),#用户名
+     password varchar(255)#密码
+);
+```
+2. 修改application-dev.yml中的数据库连接配置信息，用户名与密码等
+3. 运行APIApplication
 
 
-20160410
---------
-1. 集成fastjson作为json格式化与解析器
-2. 集成druid
-
-
-20160407
---------
-1. 升级mapper到最新版本3.3.8，重新适配，调整原有代码，由于扫描相关性，将mybatis相关代码统一放到了包orm下
-2. 调整包名，按功能做一定区分
-3. mybatis分页插件，采用mapper作者提供的插件
+新增内容开发
+===
+1. 新建表
+2. 在model包中，新建对应的JavaBean，对应与该表，继承BaseModel，具体参考User类
+3. 新建service，继承BaseServiceImpl，如果有接口，接口继承BaserService
+4. 新建controller，继承BaseController
