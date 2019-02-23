@@ -13,13 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class BaseController {
 
     @Autowired
-    private HttpServletRequest request;
+    protected HttpServletRequest request;
 
     @Autowired
-    private HttpServletResponse response;
+    protected HttpServletResponse response;
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    protected StringRedisTemplate redisTemplate;
 
     public String getStrParam(String key){
         return RequestUtil.getStrParam(this.request, key);
