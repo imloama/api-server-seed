@@ -84,6 +84,10 @@ dependencies {
     runtimeOnly('mysql:mysql-connector-java')
 	compileOnly('org.projectlombok:lombok')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	
+	//spring security
+	implementation('org.springframework.boot:spring-boot-starter-security')
+	
 }
 
 def targetDocDir = "${project.buildDir}/asciidoc/generated/swagger_adoc"
