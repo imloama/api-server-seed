@@ -1,5 +1,14 @@
-mybatis-plus:
-  global-config:
-    db-config:
-      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
-      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+server:
+  servlet:
+    session:
+      timeout: 3600
+spring:
+  redis:
+    host: 127.0.0.1
+    password:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/api-seed?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: root
+
