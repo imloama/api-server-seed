@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
 
 
 @Configuration
-public class WebConfig extends WebMvcConfigurerAdapter{
+public class WebConfig implements WebMvcConfigurer {
 
 	@Autowired
 	private APIProperties props;
@@ -45,7 +45,6 @@ public class WebConfig extends WebMvcConfigurerAdapter{
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		super.addInterceptors(registry);
 		JWTTokenInterceptor interceptor = new JWTTokenInterceptor();
 		interceptor.setProps(props);
 		registry.addInterceptor(interceptor);
