@@ -18,26 +18,25 @@ public class JWTUser extends JSONObject {
         this.putAll(object);
     }
 
-    public JWTUser(String id,String name){
+    public JWTUser(Long id,String name){
         this(id,name,JWT.newExp());
     }
 
     /**
      * 构造函数
-     * @param type 用户类型：见APIConsts，
      * @param id 用户ID
      * @param name 用户名称
      * @param exp 有效期
      */
-    public JWTUser(String id,String name,long exp){
+    public JWTUser(Long id,String name,long exp){
         this.put(KEY_ID,id);
         this.put(KEY_NAME,name);
         this.put(KEY_EXP, exp);
     }
 
 
-    public String getId(){
-        return (String)this.get(KEY_ID);
+    public Long getId(){
+        return (Long)this.get(KEY_ID);
     }
 
     public String getName(){

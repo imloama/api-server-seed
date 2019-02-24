@@ -1,9 +1,11 @@
 package com.github.imloama.api.utils;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +29,19 @@ public final class ResponseUtil {
      * @param obj
      */
     public static void json(HttpServletResponse response,String contentType,Object obj){
+        response.setStatus(200);
+        response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", contentType);
         try {
-            response.getWriter().print(new ObjectMapper().writeValueAsString(obj));
+            String result = "{}";
+            if(obj != null){
+                if(obj instanceof String){
+                    result = (String)obj;
+                }else{
+                    result = JSON.toJSONString(obj);
+                }
+            }
+            response.getWriter().print(result);
             response.getWriter().flush();
         } catch (IOException e) {
             logger.error("返回json结果时错误！",e);

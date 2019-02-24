@@ -19,6 +19,8 @@ create table user(
      username varchar(56),#用户名
      password varchar(255)#密码
 );
+INSERT INTO USER(username,password)values("admin","$2a$10$Q4OQlkJj043v4i97dhxzDO7AFpTOGWKHugNh9euqglYb5GN8MAoZO");
+
 ```
 2. 修改application-dev.yml中的数据库连接配置信息，用户名与密码等
 3. 运行APIApplication
