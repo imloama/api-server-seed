@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.github.imloama.api.config.APIProperties;
 import com.github.imloama.api.utils.RequestUtil;
 import com.github.imloama.api.utils.ResponseUtil;
+import com.github.imloama.mybatisplus.bootext.base.CodeConsts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
