@@ -1,9 +1,12 @@
 package com.github.imloama.api.config;
 
+import com.github.imloama.api.demo.service.IUserService;
 import com.github.imloama.api.security.JwtAuthenticationEntryPoint;
 import com.github.imloama.api.security.JwtAuthenticationTokenFilter;
+import com.github.imloama.api.security.RestAuthenticationAccessDeniedHandler;
 import com.github.imloama.api.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,15 +28,24 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private JwtAuthenticationEntryPoint unauthorizedHandler;
-    @Autowired
-    private AccessDeniedHandler accessDeniedHandler;
-    @Autowired
-    private JwtAuthenticationTokenFilter authenticationTokenFilter;
+    private final JwtAuthenticationEntryPoint unauthorizedHandler;
+
+    private final AccessDeniedHandler accessDeniedHandler;
+
+    private final UserDetailsService userDetailsService;
+
+    private final JwtAuthenticationTokenFilter authenticationTokenFilter;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    public WebSecurityConfig(JwtAuthenticationEntryPoint unauthorizedHandler,
+                             @Qualifier("RestAuthenticationAccessDeniedHandler") AccessDeniedHandler accessDeniedHandler,
+                             @Qualifier("myUserDetailsService") UserDetailsService myUserDetailsService,
+                             JwtAuthenticationTokenFilter authenticationTokenFilter) {
+        this.unauthorizedHandler = unauthorizedHandler;
+        this.accessDeniedHandler = accessDeniedHandler;
+        this.userDetailsService = myUserDetailsService;
+        this.authenticationTokenFilter = authenticationTokenFilter;
+    }
 
     @Autowired
     private APIProperties properties;
@@ -41,12 +53,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
     }
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/config/**", "/css/**", "/fonts/**", "/img/**", "/js/**");
+        web.ignoring().antMatchers("/v2/api-docs",
+                "/swagger-resources/configuration/ui",
+                "/swagger-resources",
+                "/swagger-resources/configuration/security",
+                "/swagger-ui.html"
+        );
     }
 
     @Override
@@ -62,7 +79,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 // 对于获取token的rest api要允许匿名访问
-                .antMatchers(this.properties.getExcludeUrls().toArray(new String[0])).permitAll()
+                //.antMatchers(this.properties.getExcludeUrls().toArray(new String[0])).permitAll()
+                .antMatchers("/api/v1/login","/hello","/api/v1/register").permitAll()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated();
 
