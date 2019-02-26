@@ -13,4 +13,4 @@ spring:
     password: root
 
 api:
-  exclude-urls: /api/v1/login,/api/v1/signin
+  exclude-urls: /api/v1/login,/api/v1/signin,/hello
