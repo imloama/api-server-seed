@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,7 +27,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
 
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
 
@@ -58,6 +59,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
+        web
+                .ignoring()
+                .antMatchers(
+                        "swagger-ui.html",
+                        "**/swagger-ui.html",
+                        "/favicon.ico",
+                        "/**/*.css",
+                        "/**/*.js",
+                        "/**/*.png",
+                        "/**/*.gif",
+                        "/swagger-resources/**",
+                        "/v2/**",
+                        "/**/*.ttf"
+                );
         web.ignoring().antMatchers("/v2/api-docs",
                 "/swagger-resources/configuration/ui",
                 "/swagger-resources",
@@ -79,8 +94,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 // 对于获取token的rest api要允许匿名访问
-                //.antMatchers(this.properties.getExcludeUrls().toArray(new String[0])).permitAll()
-                .antMatchers("/api/v1/login","/hello","/api/v1/register").permitAll()
+                .antMatchers(this.properties.getExcludeUrls().toArray(new String[0])).permitAll()
+//                .antMatchers("/api/v1/login","/hello","/api/v1/register").permitAll()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated();
 
