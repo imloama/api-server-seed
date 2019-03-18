@@ -109,11 +109,14 @@ public final class JWT {
 		if (StringUtils.isEmpty(token)) {
 			// 3. 从cookie中取
 			Cookie[] cookies = request.getCookies();
-			for (Cookie cookie : cookies) {
-				if (API_TOKEN_KEY.equals(cookie.getName())) {
-					token = cookie.getValue();
+			if(cookies!=null) {
+				for (Cookie cookie : cookies) {
+					if (API_TOKEN_KEY.equals(cookie.getName())) {
+						token = cookie.getValue();
+					}
 				}
 			}
+
 		}
 		return getJWTUser(token);
 	}

@@ -1,21 +1,23 @@
 package com.github.imloama.api.demo.controller;
 
-import com.github.imloama.api.config.jwt.JWT;
-import com.github.imloama.api.config.jwt.JWTUser;
-import com.github.imloama.api.demo.model.User;
-import com.github.imloama.mybatisplus.bootext.base.APIResult;
-import com.nimbusds.jose.JOSEException;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.github.imloama.api.config.jwt.JWT;
+import com.github.imloama.api.config.jwt.JWTUser;
+import com.github.imloama.api.demo.model.User;
+import com.github.imloama.api.demo.request.LoginRequest;
+import com.github.imloama.mybatisplus.bootext.base.APIResult;
+
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
@@ -32,11 +34,11 @@ public class JWTController {
      */
     @RequestMapping(value = "/api/v1/login", method = RequestMethod.POST)
     @ApiOperation(value = "登陆", notes = "登陆成功返回token,测试账户：admin/admin")
-    public APIResult login(@RequestParam("username") String username,
-                           @RequestParam("password") String password){
+    public APIResult login(@RequestBody LoginRequest request){
         try {
+        	UsernamePasswordAuthenticationToken userPasswordAuthToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
             //用户验证
-            Authentication auth = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            Authentication auth = this.authenticationManager.authenticate(userPasswordAuthToken);
             //存储认证信息
             SecurityContextHolder.getContext().setAuthentication(auth);
             //生成token
