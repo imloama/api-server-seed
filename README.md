@@ -41,4 +41,5 @@ INSERT INTO USER(username,password)values("admin","$2a$10$Q4OQlkJj043v4i97dhxzDO
 2. 在model包中，新建对应的JavaBean，对应与该表，继承BaseModel，具体参考User类
 3. 新建service，继承BaseServiceImpl，如果有接口，接口继承BaserService
 4. 新建controller，继承BaseController
-
+5. 访问http://localhost:8080/swagger-ui.html，打开swagger-ui界面
+6. 访问http://localhost:8080/api/v1/login，content-type=application/json,参数username=admin,password=admin，获取结果中，data即为token值
